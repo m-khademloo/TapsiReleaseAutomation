@@ -14,7 +14,31 @@ class MongoDB:
         self.client = MongoClient(uri)
         self.db = self.client[db_name]
 
-    def insert_one(self, collection_name, document):
-        collection = self.db[collection_name]
-        result = collection.insert_one(document)
-        return result.inserted_id
+    async def register_member(self, telegram_id: int, telegram_username: str, name: str, team: str):
+        # Check if user already exists
+        existing_user = self.db["telegram_users"].find_one({
+            "$or": [{"telegram_id": telegram_id}, {"username": f"@{telegram_username}"}]
+        })
+        if existing_user:
+            raise Exception("Error: User already registered.")
+
+        # Check if team exists
+        team_doc = self.db["teams"].find_one({"name": team})
+        if not team_doc:
+            raise Exception(f"Error: Team `{team}` not found.")
+
+        # User document
+        user_doc = {
+            "name": name,
+            "telegram_id": telegram_id,
+            "username": f"@{telegram_username}" if not telegram_username.startswith("@") else telegram_username
+        }
+
+        # Insert user
+        self.db["telegram_users"].insert_one(user_doc)
+
+        # Add user to the team's members array
+        self.db["teams"].update_one(
+            {"name": team},
+            {"$push": {"members": user_doc}}
+        )
