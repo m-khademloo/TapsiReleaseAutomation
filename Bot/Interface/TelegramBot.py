@@ -55,9 +55,13 @@ async def qa_approve_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await update.message.reply_text("QA approved")
 
 async def register_member_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        f"⏳ Okay, a new member, let me check your inputs...",
+        parse_mode="Markdown"
+    )
     if len(context.args) != 4:
         await update.message.reply_text(
-            "Usage: /register_member <name> <team> <telegram_username> <telegram_id>"
+            "❌ Usage: /register_member <name> <team> <telegram_username> <telegram_id>"
         )
         return
 
@@ -69,7 +73,7 @@ async def register_member_handler(update: Update, context: ContextTypes.DEFAULT_
     try:
         telegram_id = int(telegram_id_str)
     except ValueError:
-        await update.message.reply_text("Error: telegram_id must be a number.")
+        await update.message.reply_text("❌ Error: telegram_id must be a number.")
         return
 
     db = MongoDB()
@@ -86,14 +90,14 @@ async def register_member_handler(update: Update, context: ContextTypes.DEFAULT_
             parse_mode="Markdown"
         )
     except Exception as e:
-        await update.message.reply_text(str(e))
+        await update.message.reply_text(f"❌ {str(e)}")
 
 
 if __name__ == '__main__':
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("whoami", whoami_handler))
-    app.add_handler(CommandHandler("next", next_handler))
+    app.add_handler(CommandHandler("new_version", next_handler))
     app.add_handler(CommandHandler("register_team", register_team_handler))
     app.add_handler(CommandHandler("register", register_handler))
     app.add_handler(CommandHandler("qa_approve", qa_approve_handler))
