@@ -1,0 +1,23 @@
+tapsi:
+  telegram:
+    users:
+      farzaneh:
+        telegram_id: 112233
+        telegram_username: "@farzaneh"
+      mahmoud:
+        telegram_id: 112234
+        telegram_username: "@mahmoud"
+      ali:
+        telegram_id: 112236
+        telegram_username: "@ali"
+      niloufar:
+        telegram_id: 112237
+        telegram_username: "@niloufar"
+
+  teams:
+    release_admins:
+      - "farzaneh"
+    qa:
+      - "niloufar"
+    feature_team_1:
+      - "ali"
